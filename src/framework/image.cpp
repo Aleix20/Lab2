@@ -237,6 +237,113 @@ bool Image::saveTGA(const char* filename)
 	return true;
 }
 
+void Image::drawLineDDA(int x0, int y0, int x1, int y1, Color& c) {
+	float d, x, y;
+
+	//Calculem  les distancies
+	float dx = (x1 - x0);
+	float dy = (y1 - y0);
+
+	//Comrpovar la distancia mes gran
+	if (fabs(dx) >= fabs(dy))
+		d = fabs(dx);
+	else
+		d = fabs(dy);
+
+	//Construim el vector per cada iteració
+	float vx = dx / d;
+	float vy = dy / d;
+
+	//Punt inicial
+	x = x1 + sgn(x1) * 0.5;
+	y = y1 + sgn(y1) * 0.5;
+	for (int i = 0; i <= d; i++)
+	{
+		setPixelSafe(floor(x), floor(y), c);
+
+		//Avancem en la direccio del vector
+		x = x + vx;
+		y = y + vy;
+	}
+}
+
+int Image::sgn(int x) {
+	if (x > 0) return 1;
+	if (x < 0) return -1;
+	return 0;
+}
+
+void Image::drawLineBresenham(int x0, int y0, int x1, int y1, Color& c) {
+	int dx, dy, inc_E, inc_NE, d, x, y;
+	int y_inc = 1,x_inc=1;
+	if (x0 > x1) {
+		int t = x1;
+		x1 = x0;
+		x0 = t;
+	}
+	if (y0 > y1) {
+		int t = y1;
+		y1 = y0;
+		y0 = t;
+	}
+	dx = x1 - x0;
+	dy = y1 - y0;
+	
+	
+	
+	inc_E = 2 * dy;
+	inc_NE = 2 * (dy - dx);
+
+
+
+	x = x0;
+	y = y0;
+	if (dy > dx) {
+		inc_E = 2 * dx;
+		inc_NE = 2 * (dx - dy);
+		d = 2 * dx - dy;
+		setPixelSafe(x, y, c);
+		while (y < y1)
+		{
+			if (d <= 0) { //Choose E
+				d = d + inc_E;
+				y = y + 1;
+
+			}
+			else { //Choose NE
+				d = d + inc_NE;
+				y = y + 1;
+				x = x + 1;
+			}
+			setPixelSafe(x, y, c);
+		}
+
+	}
+	else {
+		inc_E = 2 * dy;
+		inc_NE = 2 * (dy - dx);
+		d = 2 * dy - dx;
+		setPixelSafe(x, y, c);
+		while (x < x1)
+		{
+			if (d <= 0) { //Choose E
+				d = d + inc_E;
+				x = x + 1;
+
+			}
+			else { //Choose NE
+				d = d + inc_NE;
+				x = x + 1;
+				y = y + y_inc;
+			}
+			setPixelSafe(x, y, c);
+		}
+	}
+	
+
+}
+
+
 #ifndef IGNORE_LAMBDAS
 
 //you can apply and algorithm for two images and store the result in the first one

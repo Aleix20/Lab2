@@ -57,6 +57,11 @@ public:
 
 	void resize(unsigned int width, unsigned int height);
 	void scale(unsigned int width, unsigned int height);
+	void Image::drawLineDDA(int x0, int y0, int x1, int y1, Color& c);
+	int sgn(int x);
+
+	void drawLineBresenham(int x0, int y0, int x1, int y1, Color& c);
+
 	
 	void flipY(); //flip the image top-down
 	void flipX(); //flip the image left-right
