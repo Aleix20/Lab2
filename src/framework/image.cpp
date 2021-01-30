@@ -274,8 +274,10 @@ int Image::sgn(int x) {
 }
 
 void Image::drawLineBresenham(int x0, int y0, int x1, int y1, Color& c) {
+	
 	int dx, dy, inc_E, inc_NE, d, x, y;
 	int y_inc = 1,x_inc=1;
+	
 	if (x0 > x1) {
 		int t = x1;
 		x1 = x0;
@@ -286,19 +288,18 @@ void Image::drawLineBresenham(int x0, int y0, int x1, int y1, Color& c) {
 		y1 = y0;
 		y0 = t;
 	}
+	
 	dx = x1 - x0;
 	dy = y1 - y0;
-	
-	
 	
 	inc_E = 2 * dy;
 	inc_NE = 2 * (dy - dx);
 
-
-
 	x = x0;
 	y = y0;
+	
 	if (dy > dx) {
+		
 		inc_E = 2 * dx;
 		inc_NE = 2 * (dx - dy);
 		d = 2 * dx - dy;
@@ -317,9 +318,9 @@ void Image::drawLineBresenham(int x0, int y0, int x1, int y1, Color& c) {
 			}
 			setPixelSafe(x, y, c);
 		}
-
 	}
 	else {
+		
 		inc_E = 2 * dy;
 		inc_NE = 2 * (dy - dx);
 		d = 2 * dy - dx;
@@ -339,8 +340,6 @@ void Image::drawLineBresenham(int x0, int y0, int x1, int y1, Color& c) {
 			setPixelSafe(x, y, c);
 		}
 	}
-	
-
 }
 
 
