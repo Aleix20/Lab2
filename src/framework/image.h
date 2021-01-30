@@ -62,6 +62,8 @@ public:
 
 	void drawLineBresenham(int x0, int y0, int x1, int y1, Color& c);
 
+	void BresenhamCircle(int x0, int y0, int radius, Color c, bool fill);
+
 	
 	void flipY(); //flip the image top-down
 	void flipX(); //flip the image left-right

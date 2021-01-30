@@ -276,32 +276,36 @@ int Image::sgn(int x) {
 void Image::drawLineBresenham(int x0, int y0, int x1, int y1, Color& c) {
 	
 	int dx, dy, inc_E, inc_NE, d, x, y;
-	int y_inc = 1,x_inc=1;
+	int inc_y = 1, inc_x =1;
 	
-	if (x0 > x1) {
-		int t = x1;
-		x1 = x0;
-		x0 = t;
-	}
+
+
+
 	dx = x1 - x0;
 	dy = y1 - y0;
 	
-	if (y0 > y1) {
-		y_inc = -y_inc;
+	//1st 8th octans
+	if (y0>y1) {
+		inc_y = -inc_y;
 		dy = -dy;
-	}
 
-	inc_E = 2 * dy;
-	inc_NE = 2 * (dy - dx);
+	}
+	if (x0 > x1) {
+		inc_x = -inc_x;
+		dx = -dx;
+
+	}
+	
 
 	x = x0;
 	y = y0;
 	
 	if (dy > dx) {
-		
+	
 		inc_E = 2 * dx;
 		inc_NE = 2 * (dx - dy);
 		d = 2 * dx - dy;
+
 		setPixelSafe(x, y, c);
 		while (y < y1)
 		{
@@ -313,13 +317,21 @@ void Image::drawLineBresenham(int x0, int y0, int x1, int y1, Color& c) {
 			else { //Choose NE
 				d = d + inc_NE;
 				y = y + 1;
-				x = x + 1;
+				x = x + inc_x;
 			}
 			setPixelSafe(x, y, c);
 		}
 	}
 	else {
-		
+			//4th 5th octans
+	if (x0 > x1) {
+		int t = x1;
+		x1 = x0;
+		x0 = t;
+		t = y1;
+		y1 = y0;
+		y0 = t;
+	}
 		inc_E = 2 * dy;
 		inc_NE = 2 * (dy - dx);
 		d = 2 * dy - dx;
@@ -334,11 +346,40 @@ void Image::drawLineBresenham(int x0, int y0, int x1, int y1, Color& c) {
 			else { //Choose NE
 				d = d + inc_NE;
 				x = x + 1;
-				y = y + y_inc;
+				y = y + inc_y;
 			}
 			setPixelSafe(x, y, c);
 		}
 	}
+}
+void Image::BresenhamCircle(int x0, int y0, int radius, Color c, bool fill)
+{
+	int x, y; int v;
+	x = 0;
+	y = radius;
+	v = 1 - radius;
+	setPixelSafe(x, y, c);
+	while (y > x) {
+		if (v < 0) {
+			v = v + 2 * x + 3;
+			x++;
+		}
+		else {
+			v = v + 2 * (x - y) + 5;
+			x++;
+			y--;
+		}
+		setPixelSafe(x+x0, y+y0, c);
+		setPixelSafe(y+y0, x+x0, c);
+		setPixelSafe(-y+y0, x+x0, c);
+		setPixelSafe(-x+x0, y+y0, c);
+		setPixelSafe(-x+x0, -y+y0, c);
+		setPixelSafe(-y+y0, -x+x0, c);
+		setPixelSafe(y+y0, -x+x0, c);
+		setPixelSafe(x+x0, -y+y0, c);
+	}
+
+	
 }
 
 
