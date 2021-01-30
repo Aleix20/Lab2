@@ -377,6 +377,17 @@ void Image::BresenhamCircle(int x0, int y0, int radius, Color c, bool fill)
 		setPixelSafe(-y+y0, -x+x0, c);
 		setPixelSafe(y+y0, -x+x0, c);
 		setPixelSafe(x+x0, -y+y0, c);
+		if (fill) {
+			for (int s = -y+y0; s < y+y0; s++)
+			{
+				for (int i = -x + x0; i < x + x0; i++)
+				{
+					setPixelSafe(i, s, c);
+
+				}
+			}
+			
+		}
 	}
 
 	
