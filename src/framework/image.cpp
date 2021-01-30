@@ -283,15 +283,14 @@ void Image::drawLineBresenham(int x0, int y0, int x1, int y1, Color& c) {
 		x1 = x0;
 		x0 = t;
 	}
-	if (y0 > y1) {
-		int t = y1;
-		y1 = y0;
-		y0 = t;
-	}
-	
 	dx = x1 - x0;
 	dy = y1 - y0;
 	
+	if (y0 > y1) {
+		y_inc = -y_inc;
+		dy = -dy;
+	}
+
 	inc_E = 2 * dy;
 	inc_NE = 2 * (dy - dx);
 

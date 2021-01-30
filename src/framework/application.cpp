@@ -36,7 +36,8 @@ void Application::render( Image& framebuffer )
 	//here you can add your code to fill the framebuffer
 
 	//fill every pixel of the image with some random data
-	framebuffer.drawLineBresenham(100,150,150,110,Color(255,0,0));
+	framebuffer.drawLineBresenham(150,130,100,145,Color(255,0,0));
+
 }
 
 //called after render
