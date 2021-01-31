@@ -2,6 +2,19 @@
 #include "utils.h"
 #include "image.h"
 
+int clicks = 0;
+int var = 0;
+int var2 = 0;
+int var3 = 0;
+int var4 = 0;
+bool first_click = true;
+bool second_click = false;
+bool finished = false;
+int x_position;
+int y_position;
+int x2_position;
+int y2_position;
+
 Application::Application(const char* caption, int width, int height)
 {
 	this->window = createWindow(caption, width, height);
@@ -36,9 +49,18 @@ void Application::render( Image& framebuffer )
 	//here you can add your code to fill the framebuffer
 
 	//fill every pixel of the image with some random data
-	//framebuffer.drawLineBresenham(0,50,5,20,Color(255,0,0));
-	framebuffer.BresenhamCircle(200,500,200, Color::BLUE,true);
+	
+	if(var == 1) {
+		//framebuffer.drawLineBresenham(0,50,5,20,Color(255,0,0));
+		if (finished) {
+			framebuffer.drawLineBresenham(x_position, y_position, x2_position, y2_position, Color(255, 0, 0));
+			clicks = 0;
+		}
+	}
 
+	if (var == 2) {
+		framebuffer.BresenhamCircle(200, 500, 200, Color::BLUE, true);
+	}
 }
 
 //called after render
@@ -62,6 +84,14 @@ void Application::onKeyDown( SDL_KeyboardEvent event )
 		case SDL_SCANCODE_ESCAPE:
 			exit(0); 
 			break; //ESC key, kill the app
+
+		case SDL_SCANCODE_1:
+			var = 1;
+			break;
+
+		case SDL_SCANCODE_2:
+			var = 2;
+			break;
 	}
 }
 
@@ -77,6 +107,19 @@ void Application::onMouseButtonDown( SDL_MouseButtonEvent event )
 	if (event.button == SDL_BUTTON_LEFT) //left mouse pressed
 	{
 		//if you read mouse position from the event, careful, Y is reversed, use mouse_position instead
+		finished = false;
+		if (clicks == 0) {
+			x_position = mouse_position.x;
+			y_position = mouse_position.y;
+		}
+		
+		if (clicks == 1) {
+			x2_position = mouse_position.x;
+			y2_position = mouse_position.y;
+			finished = true;
+		}
+
+		clicks++;
 	}
 }
 
