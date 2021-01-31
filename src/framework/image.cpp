@@ -359,20 +359,20 @@ void Image::BresenhamCircle(int x0, int y0, int radius, Color c, bool fill)
 	y = radius;
 	v = 1 - radius;
 	setPixelSafe(x, y, c);
+	
 	while (y > x) {
 		if (fill) {
 
 			for (int i = -x + x0; i < x + x0; i++)
 			{
-				setPixelSafe(i, y + y0, c);
-				setPixelSafe(i, -y + y0, c);
+				setPixelSafe(i, y + y0, c); //Fill from (-x,y) to (x,y)
+				setPixelSafe(i, -y + y0, c); //Fill from (-x,-y) to (x,-y)
 			}
 			for (int i = -y + x0; i < y + x0; i++)
 			{
-				setPixelSafe(i, x + y0, c);
-				setPixelSafe(i, -x + y0, c);
+				setPixelSafe(i, x + y0, c); //Fill from (-y,x) to (y,x)
+				setPixelSafe(i, -x + y0, c); //Fill from (-y,-x) to (y,-x)
 			}
-
 		}
 		if (v < 0) {
 			v = v + 2 * x + 3;
@@ -383,7 +383,7 @@ void Image::BresenhamCircle(int x0, int y0, int radius, Color c, bool fill)
 			x++;
 			y--;
 		}
-		setPixelSafe(x+x0, y+y0, c);
+		setPixelSafe(x + x0, y + y0, c);
 		setPixelSafe(y + x0, x + y0, c);
 		setPixelSafe(-y + x0, x + y0, c);
 		setPixelSafe(-x + x0, y + y0, c);
@@ -391,11 +391,7 @@ void Image::BresenhamCircle(int x0, int y0, int radius, Color c, bool fill)
 		setPixelSafe(-y + x0, -x + y0, c);
 		setPixelSafe(y + x0, -x + y0, c);
 		setPixelSafe(x + x0, -y + y0, c);
-		
-		
 	}
-
-	
 }
 
 
