@@ -105,19 +105,24 @@ void Application::onMouseButtonDown( SDL_MouseButtonEvent event )
 	if (event.button == SDL_BUTTON_LEFT) //left mouse pressed
 	{
 		//if you read mouse position from the event, careful, Y is reversed, use mouse_position instead
-		finished = false;
-		if (clicks == 0) {
-			x_position = mouse_position.x;
-			y_position = mouse_position.y;
+		
+		if (var == 1) {
+			
+			finished = false;
+			if (clicks == 0) {
+				x_position = mouse_position.x;
+				y_position = mouse_position.y;
+			}
+
+			if (clicks == 1) {
+				x2_position = mouse_position.x;
+				y2_position = mouse_position.y;
+				finished = true;
+			}
+
+			clicks++;
 		}
 		
-		if (clicks == 1) {
-			x2_position = mouse_position.x;
-			y2_position = mouse_position.y;
-			finished = true;
-		}
-
-		clicks++;
 	}
 }
 
