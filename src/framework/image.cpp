@@ -297,11 +297,7 @@ void Image::drawLineBresenham(int x0, int y0, int x1, int y1, Color& c) {
 		dy = -dy;
 
 	}
-	if (x0 > x1) {
-		inc_x = -inc_x;
-		dx = -dx;
-
-	}
+	
 	
 
 	x = x0;
@@ -314,20 +310,39 @@ void Image::drawLineBresenham(int x0, int y0, int x1, int y1, Color& c) {
 		d = 2 * dx - dy;
 
 		setPixelSafe(x, y, c);
-		while (y < y1)
-		{
-			if (d <= 0) { //Choose E
-				d = d + inc_E;
-				y = y + 1;
+		if (y0>y1) {
+			while (y > y1)
+			{
+				if (d <= 0) { //Choose E
+					d = d + inc_E;
+					y = y - 1;
 
+				}
+				else { //Choose NE
+					d = d + inc_NE;
+					y = y - 1;
+					x = x + 1;
+				}
+				setPixelSafe(x, y, c);
 			}
-			else { //Choose NE
-				d = d + inc_NE;
-				y = y + 1;
-				x = x + inc_x;
-			}
-			setPixelSafe(x, y, c);
 		}
+		else {
+			while (y < y1)
+			{
+				if (d <= 0) { //Choose E
+					d = d + inc_E;
+					y = y + 1;
+
+				}
+				else { //Choose NE
+					d = d + inc_NE;
+					y = y + 1;
+					x = x + 1;
+				}
+				setPixelSafe(x, y, c);
+			}
+		}
+		
 	}
 	else {
 			//4th 5th octans
