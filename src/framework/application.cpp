@@ -4,12 +4,10 @@
 
 int clicks = 0;
 int var = 0;
-int var2 = 0;
-int var3 = 0;
-int var4 = 0;
 bool first_click = true;
 bool second_click = false;
 bool finished = false;
+
 int x_position;
 int y_position;
 int x2_position;
