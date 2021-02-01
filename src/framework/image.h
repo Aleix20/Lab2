@@ -19,6 +19,7 @@
 //Class Image: to store a matrix of pixels
 class Image
 {
+	
 	//a general struct to store all the information about a TGA file
 	typedef struct sTGAInfo 
 	{
@@ -29,6 +30,10 @@ class Image
 	} TGAInfo;
 
 public:
+	typedef struct sCelda {
+		int minx;
+		int maxx;
+	}Celda;
 	unsigned int width;
 	unsigned int height;
 	Color* pixels;
@@ -63,6 +68,8 @@ public:
 	void drawLineBresenham(int x0, int y0, int x1, int y1, Color& c);
 
 	void BresenhamCircle(int x0, int y0, int radius, Color c, bool fill);
+
+	void drawTriangle(int x0, int y0, int x1, int y1, int x2, int y2, Color& c, bool fill);
 
 	
 	void flipY(); //flip the image top-down

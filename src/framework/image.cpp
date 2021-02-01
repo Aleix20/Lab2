@@ -255,8 +255,8 @@ void Image::drawLineDDA(int x0, int y0, int x1, int y1, Color& c) {
 	float vy = dy / d;
 
 	//Punt inicial
-	x = x1 + sgn(x1) * 0.5;
-	y = y1 + sgn(y1) * 0.5;
+	x = x0 + sgn(x0) * 0.5;
+	y = y0 + sgn(y0) * 0.5;
 	for (int i = 0; i <= d; i++)
 	{
 		setPixelSafe(floor(x), floor(y), c);
@@ -279,7 +279,14 @@ void Image::drawLineBresenham(int x0, int y0, int x1, int y1, Color& c) {
 	int inc_y = 1, inc_x =1;
 	
 
-
+	if (x0 > x1) {
+		int t = x1;
+		x1 = x0;
+		x0 = t;
+		t = y1;
+		y1 = y0;
+		y0 = t;
+	}
 
 	dx = x1 - x0;
 	dy = y1 - y0;
@@ -324,14 +331,7 @@ void Image::drawLineBresenham(int x0, int y0, int x1, int y1, Color& c) {
 	}
 	else {
 			//4th 5th octans
-	if (x0 > x1) {
-		int t = x1;
-		x1 = x0;
-		x0 = t;
-		t = y1;
-		y1 = y0;
-		y0 = t;
-	}
+
 		inc_E = 2 * dy;
 		inc_NE = 2 * (dy - dx);
 		d = 2 * dy - dx;
@@ -360,7 +360,7 @@ void Image::BresenhamCircle(int x0, int y0, int radius, Color c, bool fill)
 	v = 1 - radius;
 	setPixelSafe(x, y, c);
 	
-	while (y > x) {
+	while (y >= x) {
 		if (fill) {
 
 			for (int i = -x + x0; i < x + x0; i++)
@@ -392,6 +392,18 @@ void Image::BresenhamCircle(int x0, int y0, int radius, Color c, bool fill)
 		setPixelSafe(y + x0, -x + y0, c);
 		setPixelSafe(x + x0, -y + y0, c);
 	}
+}
+
+void Image::drawTriangle(int x0, int y0, int x1, int y1, int x2, int y2,
+	Color& c, bool fill) {
+
+	if (fill) {
+
+	}
+
+	drawLineDDA(x0, y0, x1, y1,c);
+	drawLineDDA(x1,y1,x2,y2,c);
+	drawLineDDA(x2,y2,x0,y0, c);
 }
 
 

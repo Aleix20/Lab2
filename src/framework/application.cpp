@@ -2,16 +2,21 @@
 #include "utils.h"
 #include "image.h"
 
+
 int clicks = 0;
 int var = 0;
-bool first_click = true;
-bool second_click = false;
 bool finished = false;
 
 int x_position;
 int y_position;
 int x2_position;
 int y2_position;
+int x3_position;
+int y3_position;
+
+std::vector<Image::Celda> table;
+
+
 
 Application::Application(const char* caption, int width, int height)
 {
@@ -35,6 +40,9 @@ void Application::init(void)
 {
 	std::cout << "initiating app..." << std::endl;
 
+	//Alçada de la taula
+	table.resize(this->window_height);
+	
 	//here add your init stuff
 }
 
@@ -47,26 +55,24 @@ void Application::render( Image& framebuffer )
 	//here you can add your code to fill the framebuffer
 
 	//fill every pixel of the image with some random data
-	
-	if(var == 1) {
+
+	if (var == 1) {
+		framebuffer.fill(Color::BLACK);
+		if (clicks == 1) {
+			framebuffer.BresenhamCircle(x_position, y_position, 1, Color::RED, true);
+		}
+		if (finished) {
+			framebuffer.drawLineDDA(x_position, y_position, x2_position, y2_position, Color(255, 0, 0));
+			clicks = 0;
+		}
+	}
+	if(var == 2) {
 		framebuffer.fill(Color::BLACK);
 		if (clicks == 1) {
 			framebuffer.BresenhamCircle(x_position, y_position, 1, Color::RED, true);
 		}
 		if (finished) {
 			framebuffer.drawLineBresenham(x_position, y_position, x2_position, y2_position, Color(255, 0, 0));
-			clicks = 0;
-		}
-	}
-
-	if (var == 2) {
-		framebuffer.fill(Color::BLACK);
-		if (clicks == 1) {
-			framebuffer.BresenhamCircle(x_position, y_position, 1, Color::BLUE, true);
-		}
-		if (finished) {
-			int radius = abs(sqrt((x2_position - x_position) * (x2_position - x_position) + (y2_position - y_position) * (y2_position - y_position)));
-			framebuffer.BresenhamCircle(x_position, y_position, radius, Color::BLUE, true);
 			clicks = 0;
 		}
 	}
@@ -78,9 +84,39 @@ void Application::render( Image& framebuffer )
 		}
 		if (finished) {
 			int radius = abs(sqrt((x2_position - x_position) * (x2_position - x_position) + (y2_position - y_position) * (y2_position - y_position)));
+			framebuffer.BresenhamCircle(x_position, y_position, radius, Color::BLUE, true);
+			clicks = 0;
+		}
+	}
+
+	if (var == 4) {
+		framebuffer.fill(Color::BLACK);
+		if (clicks == 1) {
+			framebuffer.BresenhamCircle(x_position, y_position, 1, Color::BLUE, true);
+		}
+		if (finished) {
+			int radius = abs(sqrt((x2_position - x_position) * (x2_position - x_position) + (y2_position - y_position) * (y2_position - y_position)));
 			framebuffer.BresenhamCircle(x_position, y_position, radius, Color::BLUE, false);
 			clicks = 0;
 		}
+	}
+	if (var==5) {
+		framebuffer.fill(Color::BLACK);
+		if (clicks == 1) {
+			framebuffer.BresenhamCircle(x_position, y_position, 1, Color::RED, true);
+		}
+		if (clicks==2) {
+
+			framebuffer.BresenhamCircle(x_position, y_position, 1, Color::RED, true);
+			framebuffer.BresenhamCircle(x2_position, y2_position, 1, Color::RED, true);
+			
+		}
+		if (finished)
+		{
+			framebuffer.drawTriangle(x_position,y_position,x2_position, y2_position, x3_position, y3_position, Color{ 0,255,0 }, false);
+			clicks = 0;
+		}
+		
 	}
 }
 
@@ -120,6 +156,14 @@ void Application::onKeyDown( SDL_KeyboardEvent event )
 			var = 3;
 			finished = false;
 			break;
+		case SDL_SCANCODE_4:
+			var = 4;
+			finished = false;
+			break;
+		case SDL_SCANCODE_5:
+			var = 5;
+			finished = false;
+			break;
 	}
 }
 
@@ -136,7 +180,8 @@ void Application::onMouseButtonDown( SDL_MouseButtonEvent event )
 	{
 		//if you read mouse position from the event, careful, Y is reversed, use mouse_position instead
 		
-		if (var == 1 || var == 2 || var == 3) {
+		
+		if (var == 1 || var == 2 || var == 3 || var == 4) {
 			
 			finished = false;
 			if (clicks == 0) {
@@ -151,6 +196,27 @@ void Application::onMouseButtonDown( SDL_MouseButtonEvent event )
 			}
 
 			clicks++;
+		}
+		if (var==5) {
+			finished = false;
+			if (clicks == 0) {
+				x_position = mouse_position.x;
+				y_position = mouse_position.y;
+			}
+
+			if (clicks == 1) {
+				x2_position = mouse_position.x;
+				y2_position = mouse_position.y;
+				
+			}
+			if (clicks == 2) {
+				x3_position = mouse_position.x;
+				y3_position = mouse_position.y;
+				finished = true;
+			}
+
+			clicks++;
+
 		}
 		
 		
