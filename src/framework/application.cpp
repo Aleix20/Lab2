@@ -49,7 +49,10 @@ void Application::render( Image& framebuffer )
 	//fill every pixel of the image with some random data
 	
 	if(var == 1) {
-		//framebuffer.drawLineBresenham(0,50,5,20,Color(255,0,0));
+		framebuffer.fill(Color::BLACK);
+		if (clicks == 1) {
+			framebuffer.BresenhamCircle(x_position, y_position, 1, Color::RED, true);
+		}
 		if (finished) {
 			framebuffer.drawLineBresenham(x_position, y_position, x2_position, y2_position, Color(255, 0, 0));
 			clicks = 0;
@@ -57,7 +60,27 @@ void Application::render( Image& framebuffer )
 	}
 
 	if (var == 2) {
-		framebuffer.BresenhamCircle(200, 500, 200, Color::BLUE, true);
+		framebuffer.fill(Color::BLACK);
+		if (clicks == 1) {
+			framebuffer.BresenhamCircle(x_position, y_position, 1, Color::BLUE, true);
+		}
+		if (finished) {
+			int radius = abs(sqrt((x2_position - x_position) * (x2_position - x_position) + (y2_position - y_position) * (y2_position - y_position)));
+			framebuffer.BresenhamCircle(x_position, y_position, radius, Color::BLUE, true);
+			clicks = 0;
+		}
+	}
+
+	if (var == 3) {
+		framebuffer.fill(Color::BLACK);
+		if (clicks == 1) {
+			framebuffer.BresenhamCircle(x_position, y_position, 1, Color::BLUE, true);
+		}
+		if (finished) {
+			int radius = abs(sqrt((x2_position - x_position) * (x2_position - x_position) + (y2_position - y_position) * (y2_position - y_position)));
+			framebuffer.BresenhamCircle(x_position, y_position, radius, Color::BLUE, false);
+			clicks = 0;
+		}
 	}
 }
 
@@ -85,10 +108,17 @@ void Application::onKeyDown( SDL_KeyboardEvent event )
 
 		case SDL_SCANCODE_1:
 			var = 1;
+			finished = false;
 			break;
 
 		case SDL_SCANCODE_2:
 			var = 2;
+			finished = false;
+			break;
+
+		case SDL_SCANCODE_3:
+			var = 3;
+			finished = false;
 			break;
 	}
 }
@@ -106,7 +136,7 @@ void Application::onMouseButtonDown( SDL_MouseButtonEvent event )
 	{
 		//if you read mouse position from the event, careful, Y is reversed, use mouse_position instead
 		
-		if (var == 1) {
+		if (var == 1 || var == 2 || var == 3) {
 			
 			finished = false;
 			if (clicks == 0) {
@@ -122,6 +152,8 @@ void Application::onMouseButtonDown( SDL_MouseButtonEvent event )
 
 			clicks++;
 		}
+		
+		
 		
 	}
 }
