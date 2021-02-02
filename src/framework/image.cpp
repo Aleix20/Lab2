@@ -299,7 +299,6 @@ void Image::drawLineBresenham(int x0, int y0, int x1, int y1, Color& c) {
 	}
 	
 	
-
 	x = x0;
 	y = y0;
 	
@@ -409,16 +408,81 @@ void Image::BresenhamCircle(int x0, int y0, int radius, Color c, bool fill)
 	}
 }
 
+void Image::DDAwithTable(int x0, int y0, int x1, int y1, std::vector<sCelda>& table)
+{
+
+	float d, x, y;
+
+	//Calculem  les distancies
+	float dx = (x1 - x0);
+	float dy = (y1 - y0);
+
+	//Comrpovar la distancia mes gran
+	if (fabs(dx) >= fabs(dy))
+		d = fabs(dx);
+	else
+		d = fabs(dy);
+
+	//Construim el vector per cada iteració
+	float vx = dx / d;
+	float vy = dy / d;
+
+	//Punt inicial
+	x = x0 + sgn(x0) * 0.5;
+	y = y0 + sgn(y0) * 0.5;
+	for (int i = 0; i <= d; i++)
+	{
+
+		if (floor(x) <table[y].minx) {
+			table[y].minx = x;
+		}
+		else if (floor(x) > table[y].maxx) {
+			table[y].maxx = x;
+		}
+		//setPixelSafe(floor(x), floor(y), c);
+
+		//Avancem en la direccio del vector
+		x = x + vx;
+		y = y + vy;
+	}
+	//fill values like a regular array
+	
+}
+
+
 void Image::drawTriangle(int x0, int y0, int x1, int y1, int x2, int y2,
 	Color& c, bool fill) {
 
 	if (fill) {
 
+		std::vector<Image::Celda> table;
+		table.resize(this->height);
+		//init table
+		for (int i = 0; i < table.size(); i++) {
+			table[i].minx = 100000; //very big number
+			table[i].maxx = -100000; //very small number
+		}
+
+		DDAwithTable(x0, y0, x1, y1,table);
+		DDAwithTable(x1, y1, x2, y2,table);
+		DDAwithTable(x2, y2, x0, y0,table);
+		
+		for (int i = 0; i < table.size(); i++) {
+			for (int j = table[i].minx; j < table[i].maxx; j++)
+			{
+				setPixelSafe(j,i,c);
+			}
+		}
+		
+		
+	}
+	else {
+		drawLineDDA(x0, y0, x1, y1, c);
+		drawLineDDA(x1, y1, x2, y2, c);
+		drawLineDDA(x2, y2, x0, y0, c);
 	}
 
-	drawLineDDA(x0, y0, x1, y1,c);
-	drawLineDDA(x1,y1,x2,y2,c);
-	drawLineDDA(x2,y2,x0,y0, c);
+	
 }
 
 

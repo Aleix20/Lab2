@@ -69,6 +69,8 @@ public:
 
 	void BresenhamCircle(int x0, int y0, int radius, Color c, bool fill);
 
+	void DDAwithTable(int x0, int y0, int x1, int y1, std::vector<sCelda>& table);
+
 	void drawTriangle(int x0, int y0, int x1, int y1, int x2, int y2, Color& c, bool fill);
 
 	

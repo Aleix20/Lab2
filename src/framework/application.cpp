@@ -14,7 +14,7 @@ int y2_position;
 int x3_position;
 int y3_position;
 
-std::vector<Image::Celda> table;
+
 
 
 
@@ -41,7 +41,7 @@ void Application::init(void)
 	std::cout << "initiating app..." << std::endl;
 
 	//Alçada de la taula
-	table.resize(this->window_height);
+	
 	
 	//here add your init stuff
 }
@@ -113,7 +113,7 @@ void Application::render( Image& framebuffer )
 		}
 		if (finished)
 		{
-			framebuffer.drawTriangle(x_position,y_position,x2_position, y2_position, x3_position, y3_position, Color{ 0,255,0 }, false);
+			framebuffer.drawTriangle(x_position,y_position,x2_position, y2_position, x3_position, y3_position, Color{ 0,255,0 }, true);
 			clicks = 0;
 		}
 		
