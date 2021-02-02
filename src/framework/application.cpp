@@ -116,7 +116,23 @@ void Application::render( Image& framebuffer )
 			framebuffer.drawTriangle(x_position,y_position,x2_position, y2_position, x3_position, y3_position, Color{ 0,255,0 }, true);
 			clicks = 0;
 		}
-		
+	}
+	if (var == 6) {
+		framebuffer.fill(Color::BLACK);
+		if (clicks == 1) {
+			framebuffer.BresenhamCircle(x_position, y_position, 1, Color::RED, true);
+		}
+		if (clicks == 2) {
+
+			framebuffer.BresenhamCircle(x_position, y_position, 1, Color::RED, true);
+			framebuffer.BresenhamCircle(x2_position, y2_position, 1, Color::RED, true);
+
+		}
+		if (finished)
+		{
+			framebuffer.drawTriangleInterpolated(x_position, y_position, x2_position, y2_position, x3_position, y3_position, Color{ 0,255,0 }, Color{ 255,0,0 }, Color{ 0,0,255 });
+			clicks = 0;
+		}
 	}
 }
 
@@ -164,6 +180,10 @@ void Application::onKeyDown( SDL_KeyboardEvent event )
 			var = 5;
 			finished = false;
 			break;
+		case SDL_SCANCODE_6:
+			var = 6;
+			finished = false;
+			break;
 	}
 }
 
@@ -179,7 +199,6 @@ void Application::onMouseButtonDown( SDL_MouseButtonEvent event )
 	if (event.button == SDL_BUTTON_LEFT) //left mouse pressed
 	{
 		//if you read mouse position from the event, careful, Y is reversed, use mouse_position instead
-		
 		
 		if (var == 1 || var == 2 || var == 3 || var == 4) {
 			
@@ -197,7 +216,7 @@ void Application::onMouseButtonDown( SDL_MouseButtonEvent event )
 
 			clicks++;
 		}
-		if (var==5) {
+		if (var==5 || var == 6) {
 			finished = false;
 			if (clicks == 0) {
 				x_position = mouse_position.x;
@@ -216,11 +235,7 @@ void Application::onMouseButtonDown( SDL_MouseButtonEvent event )
 			}
 
 			clicks++;
-
 		}
-		
-		
-		
 	}
 }
 

@@ -439,7 +439,6 @@ void Image::DDAwithTable(int x0, int y0, int x1, int y1, std::vector<sCelda>& ta
 		if (x > table[floor(y)].maxx) {
 			table[floor(y)].maxx = floor(x);
 		}
-		setPixelSafe(floor(x), floor(y), Color::GREEN);
 
 		//Avancem en la direccio del vector
 		x = x + vx;
@@ -450,8 +449,7 @@ void Image::DDAwithTable(int x0, int y0, int x1, int y1, std::vector<sCelda>& ta
 }
 
 
-void Image::drawTriangle(int x0, int y0, int x1, int y1, int x2, int y2,
-	Color& c, bool fill) {
+void Image::drawTriangle(int x0, int y0, int x1, int y1, int x2, int y2, Color& c, bool fill) {
 
 	if (fill) {
 
@@ -471,22 +469,50 @@ void Image::drawTriangle(int x0, int y0, int x1, int y1, int x2, int y2,
 			for (int j = table[i].minx; j < table[i].maxx; j++)
 			{
 				setPixelSafe(j,i,c);
-
 			}
 		}
-		
-		
 	}
 	else {
 		drawLineDDA(x0, y0, x1, y1, c);
 		drawLineDDA(x1, y1, x2, y2, c);
 		drawLineDDA(x2, y2, x0, y0, c);
 	}
-
-	
 }
 
+void Image::drawTriangleInterpolated(int x0, int y0, int x1, int y1, int x2, int y2, Color& c0, Color& c1, Color& c2) {
 
+	//assuming P0,P1 and P2 are the vertices 2D
+	float v0[2];
+	float v1[2];
+	float v2[2];
+
+	v0[0] = x1 - x0;
+	v0[1] = y1 - y0;
+	v1[0] = x2 - x1;
+	v1[1] = y2 - y1;
+	v2[0] = 200 - x0;
+	v2[1] = 300 - y0;
+
+	/*v0 = P1 - P0;
+	v1 = P2 - P0;
+	v2 = P - P0;*/ //P is the x,y of the pixel
+
+	//computing the dot of a vector with itself
+	//is the same as length*length but faster
+	float d00 = v0[0] * v0[0] + v0[1] * v0[1]; //v0.dot(v0);
+	float d01 = v0[0] * v0[0] + v1[1] * v1[1]; //v0.dot(v1);
+	float d11 = v1[0] * v1[0] + v1[1] * v1[1]; //v1.dot(v1);
+	float d20 = v2[0] * v2[0] + v0[1] * v0[1]; //v2.dot(v0);
+	float d21 = v2[0] * v2[0] + v1[1] * v1[1]; //v2.dot(v1);
+	float denom = d00 * d11 - d01 * d01;
+	float v = (d11 * d20 - d01 * d21) / denom;
+	float w = (d00 * d21 - d01 * d20) / denom;
+	float u = 1.0 - v - w;
+
+	//use weights to compute final color
+	Color c = c0 * u + c1 * v + c2 * w;
+
+}
 #ifndef IGNORE_LAMBDAS
 
 //you can apply and algorithm for two images and store the result in the first one
