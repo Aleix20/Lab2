@@ -433,13 +433,13 @@ void Image::DDAwithTable(int x0, int y0, int x1, int y1, std::vector<sCelda>& ta
 	for (int i = 0; i <= d; i++)
 	{
 
-		if (floor(x) <table[y].minx) {
-			table[y].minx = x;
+		if (x <table[floor(y)].minx) {
+			table[floor(y)].minx = floor(x);
 		}
-		else if (floor(x) > table[y].maxx) {
-			table[y].maxx = x;
+		if (x > table[floor(y)].maxx) {
+			table[floor(y)].maxx = floor(x);
 		}
-		//setPixelSafe(floor(x), floor(y), c);
+		setPixelSafe(floor(x), floor(y), Color::GREEN);
 
 		//Avancem en la direccio del vector
 		x = x + vx;
@@ -471,6 +471,7 @@ void Image::drawTriangle(int x0, int y0, int x1, int y1, int x2, int y2,
 			for (int j = table[i].minx; j < table[i].maxx; j++)
 			{
 				setPixelSafe(j,i,c);
+
 			}
 		}
 		
