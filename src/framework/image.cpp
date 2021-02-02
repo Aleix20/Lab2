@@ -490,8 +490,8 @@ void Image::drawTriangleInterpolated(int x0, int y0, int x1, int y1, int x2, int
 	v0[1] = y1 - y0;
 	v1[0] = x2 - x1;
 	v1[1] = y2 - y1;
-	v2[0] = 200 - x0;
-	v2[1] = 300 - y0;
+	v2[0] = 200 - x0; //Aquí on posa 200 es x (coordenada del pixel) s'ha de canviar pero sino donava error de compilació 
+	v2[1] = 300 - y0; //Aquí on posa 300 es y (coordenada del pixel)
 
 	/*v0 = P1 - P0;
 	v1 = P2 - P0;
