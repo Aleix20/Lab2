@@ -3,7 +3,7 @@
 #include "image.h"
 
 
-int clicks = 0; //Inicialització de les variables globals que utilitzem durant la pràctica.
+int clicks = 0; //Declaració de les variables globals que utilitzem durant la pràctica.
 int var = 0;
 bool finished = false;
 
@@ -36,9 +36,6 @@ Application::Application(const char* caption, int width, int height)
 void Application::init(void)
 {
 	std::cout << "initiating app..." << std::endl;
-
-	//Alçada de la taula
-	
 	
 	//here add your init stuff
 }
