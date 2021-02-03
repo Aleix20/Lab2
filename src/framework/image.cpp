@@ -481,36 +481,60 @@ void Image::drawTriangle(int x0, int y0, int x1, int y1, int x2, int y2, Color& 
 
 void Image::drawTriangleInterpolated(int x0, int y0, int x1, int y1, int x2, int y2, Color& c0, Color& c1, Color& c2) {
 
-	//assuming P0,P1 and P2 are the vertices 2D
-	float v0[2];
-	float v1[2];
-	float v2[2];
+
+	std::vector<Image::Celda> table;
+	table.resize(this->height);
+	//init table
+	for (int i = 0; i < table.size(); i++) {
+		table[i].minx = 100000; //very big number
+		table[i].maxx = -100000; //very small number
+	}
+
+	DDAwithTable(x0, y0, x1, y1, table);
+	DDAwithTable(x1, y1, x2, y2, table);
+	DDAwithTable(x2, y2, x0, y0, table);
+	int v0[2];
+	int v1[2];
+	int v2[2];
 
 	v0[0] = x1 - x0;
 	v0[1] = y1 - y0;
-	v1[0] = x2 - x1;
-	v1[1] = y2 - y1;
-	v2[0] = 200 - x0; //Aquí on posa 200 es x (coordenada del pixel) s'ha de canviar pero sino donava error de compilació 
-	v2[1] = 300 - y0; //Aquí on posa 300 es y (coordenada del pixel)
+	v1[0] = x2 - x0;
+	v1[1] = y2 - y0;
+	float d00 = v0[0] * v0[0] + v0[1] * v0[1]; //v0.dot(v0);
+	float d01 = v0[0] * v1[0] + v0[1] * v1[1]; //v0.dot(v1);
+	float d11 = v1[0] * v1[0] + v1[1] * v1[1]; //v1.dot(v1);
+	for (int i = 0; i < table.size(); i++) {
+		for (int j = table[i].minx; j < table[i].maxx; j++)
+		{
 
+			v2[0] = j - x0; //Aquí on posa 200 es x (coordenada del pixel) s'ha de canviar pero sino donava error de compilació 
+			v2[1] = i - y0; //Aquí on posa 300 es y (coordenada del pixel)
+			
+			float d20 = v2[0] * v0[0] + v2[1] * v0[1]; //v2.dot(v0);
+			float d21 = v2[0] * v1[0] + v2[1] * v1[1]; //v2.dot(v1);
+			float denom = d00 * d11 - d01 * d01;
+			float v = (d11 * d20 - d01 * d21) / denom;
+			float w = (d00 * d21 - d01 * d20) / denom;
+			float u = 1.0 - v - w;
+
+			//use weights to compute final color
+			Color c = c0 * u + c1 * v + c2 * w;
+
+			setPixelSafe(j, i, c);
+		}
+	}
+	//assuming P0,P1 and P2 are the vertices 2D
+	/*v2[0] = 200 - x0; //Aquí on posa 200 es x (coordenada del pixel) s'ha de canviar pero sino donava error de compilació 
+	v2[1] = 300 - y0; //Aquí on posa 300 es y (coordenada del pixel)
+*/
+	
 	/*v0 = P1 - P0;
 	v1 = P2 - P0;
 	v2 = P - P0;*/ //P is the x,y of the pixel
 
 	//computing the dot of a vector with itself
 	//is the same as length*length but faster
-	float d00 = v0[0] * v0[0] + v0[1] * v0[1]; //v0.dot(v0);
-	float d01 = v0[0] * v0[0] + v1[1] * v1[1]; //v0.dot(v1);
-	float d11 = v1[0] * v1[0] + v1[1] * v1[1]; //v1.dot(v1);
-	float d20 = v2[0] * v2[0] + v0[1] * v0[1]; //v2.dot(v0);
-	float d21 = v2[0] * v2[0] + v1[1] * v1[1]; //v2.dot(v1);
-	float denom = d00 * d11 - d01 * d01;
-	float v = (d11 * d20 - d01 * d21) / denom;
-	float w = (d00 * d21 - d01 * d20) / denom;
-	float u = 1.0 - v - w;
-
-	//use weights to compute final color
-	Color c = c0 * u + c1 * v + c2 * w;
 
 }
 #ifndef IGNORE_LAMBDAS
