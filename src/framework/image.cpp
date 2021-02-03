@@ -237,7 +237,7 @@ bool Image::saveTGA(const char* filename)
 	return true;
 }
 
-void Image::drawLineDDA(int x0, int y0, int x1, int y1, Color& c) {
+void Image::drawLineDDA(int x0, int y0, int x1, int y1, Color& c) { //Funció per dibuxiar línies amb l'algoritme DDA
 	float d, x, y;
 
 	//Calculem  les distancies
@@ -267,8 +267,8 @@ void Image::drawLineDDA(int x0, int y0, int x1, int y1, Color& c) {
 	}
 }
 
-int Image::sgn(int x) {
-	if (x > 0) return 1;
+int Image::sgn(int x) { //Funció que ens permet el signe d'un número
+	if (x > 0) return 1; //Si el número es positiu retornarem 1 i si és negatiu -1, sinó retornarem 0
 	if (x < 0) return -1;
 	return 0;
 }
@@ -366,26 +366,26 @@ void Image::drawLineBresenham(int x0, int y0, int x1, int y1, Color& c) {
 		}
 	}
 }
-void Image::BresenhamCircle(int x0, int y0, int radius, Color c, bool fill)
-{
-	int x, y; int v;
+void Image::BresenhamCircle(int x0, int y0, int radius, Color c, bool fill){ //Funció que ens permet dibuixar un cercle seguint l'algoritme de Bresenham
+	
+	int x, y; int v; //Inicialitzem les variables necessàries per aplicar l'algoritme
 	x = 0;
 	y = radius;
 	v = 1 - radius;
 	setPixelSafe(x, y, c);
 	
 	while (y >= x) {
-		if (fill) {
+		if (fill) { //En el cas de que haguem de pintar el cercle per dins
 
 			for (int i = -x + x0; i < x + x0; i++)
 			{
-				setPixelSafe(i, y + y0, c); //Fill from (-x,y) to (x,y)
-				setPixelSafe(i, -y + y0, c); //Fill from (-x,-y) to (x,-y)
+				setPixelSafe(i, y + y0, c); //Fill des de (-x,y) a (x,y)
+				setPixelSafe(i, -y + y0, c); //Fill des de (-x,-y) to (x,-y)
 			}
 			for (int i = -y + x0; i < y + x0; i++)
 			{
-				setPixelSafe(i, x + y0, c); //Fill from (-y,x) to (y,x)
-				setPixelSafe(i, -x + y0, c); //Fill from (-y,-x) to (y,-x)
+				setPixelSafe(i, x + y0, c); //Fill des de (-y,x) a (y,x)
+				setPixelSafe(i, -x + y0, c); //Fill des de (-y,-x) to (y,-x)
 			}
 		}
 		if (v < 0) {
@@ -397,7 +397,7 @@ void Image::BresenhamCircle(int x0, int y0, int radius, Color c, bool fill)
 			x++;
 			y--;
 		}
-		setPixelSafe(x + x0, y + y0, c);
+		setPixelSafe(x + x0, y + y0, c); //Apliquem tans setPixel com els valors dels punts corresponents als octans.
 		setPixelSafe(y + x0, x + y0, c);
 		setPixelSafe(-y + x0, x + y0, c);
 		setPixelSafe(-x + x0, y + y0, c);
@@ -430,67 +430,65 @@ void Image::DDAwithTable(int x0, int y0, int x1, int y1, std::vector<sCelda>& ta
 	//Punt inicial
 	x = x0 + sgn(x0) * 0.5;
 	y = y0 + sgn(y0) * 0.5;
-	for (int i = 0; i <= d; i++)
-	{
-
-		if (x <table[floor(y)].minx) {
+	
+	for (int i = 0; i <= d; i++){
+		
+		if (x <table[floor(y)].minx) {          //Iterem per els valors del triangle, si trobem un valor més petit que el mínim que teniem a la taula, aquell serà el nou mínim de la taula
 			table[floor(y)].minx = floor(x);
 		}
-		if (x > table[floor(y)].maxx) {
+		if (x > table[floor(y)].maxx) {         //Iterem per els valors del triangle, si trobem un valor més gran que el màxim de la taula, aquell serà el nou màxim de la taula
 			table[floor(y)].maxx = floor(x);
-		}
+		}                                       //De manera que tindrem una taula en la que haurem emmagatzemat el mínim i el màxim del triangle per cada posició y
 
-		//Avancem en la direccio del vector
+		//Avancem en la direccio del vector.
 		x = x + vx;
 		y = y + vy;
 	}
-	//fill values like a regular array
-	
 }
 
 
-void Image::drawTriangle(int x0, int y0, int x1, int y1, int x2, int y2, Color& c, bool fill) {
+void Image::drawTriangle(int x0, int y0, int x1, int y1, int x2, int y2, Color& c, bool fill) { //Funció que ens permet dibuixar un  triangle
 
-	if (fill) {
+	if (fill) { //En el cas de que volguem omplir el triangle que dibuixem
 
-		std::vector<Image::Celda> table;
-		table.resize(this->height);
+		std::vector<Image::Celda> table; //Creem una nova taula de cel·les
+		table.resize(this->height); //Li donem el mateix tamany que l'altura del framebuffer
 		//init table
-		for (int i = 0; i < table.size(); i++) {
+		
+		for (int i = 0; i < table.size(); i++) { //Inicialitzem els valors minX i maxX amb un valor molt gran i un valor molt petit respectivament
 			table[i].minx = 100000; //very big number
 			table[i].maxx = -100000; //very small number
 		}
 
-		DDAwithTable(x0, y0, x1, y1,table);
+		DDAwithTable(x0, y0, x1, y1,table); //Apliquem l'algoritme de DDAwithTable per omplir la taula segons els costats del triangle
 		DDAwithTable(x1, y1, x2, y2,table);
 		DDAwithTable(x2, y2, x0, y0,table);
 		
-		for (int i = 0; i < table.size(); i++) {
+		for (int i = 0; i < table.size(); i++) { //Iterem per la taula i del minX al maxX per pintar els píxels entre aquests dos valors
 			for (int j = table[i].minx; j < table[i].maxx; j++)
 			{
 				setPixelSafe(j,i,c);
 			}
 		}
 	}
-	else {
+	else { //En el cas de que no volguem pintar l'interior del triangle dibuixem 3 línies que uneixin els vèrtexs del triangle.
 		drawLineDDA(x0, y0, x1, y1, c);
 		drawLineDDA(x1, y1, x2, y2, c);
 		drawLineDDA(x2, y2, x0, y0, c);
 	}
 }
 
-void Image::drawTriangleInterpolated(int x0, int y0, int x1, int y1, int x2, int y2, Color& c0, Color& c1, Color& c2) {
+void Image::drawTriangleInterpolated(int x0, int y0, int x1, int y1, int x2, int y2, Color& c0, Color& c1, Color& c2) { //Funció que ens permet dibuixar un triangle i pintar-lo segons la interpolació baricèntrica
 
-
-	std::vector<Image::Celda> table;
-	table.resize(this->height);
+	std::vector<Image::Celda> table; //Creem una nova taula de cel·les
+	table.resize(this->height); //Li donem el mateix tamany que l'altura del framebuffer
 	//init table
-	for (int i = 0; i < table.size(); i++) {
+	for (int i = 0; i < table.size(); i++) { //Inicialitzem els valors minX i maxX amb un valor molt gran i un valor molt petit respectivament
 		table[i].minx = 100000; //very big number
 		table[i].maxx = -100000; //very small number
 	}
 
-	DDAwithTable(x0, y0, x1, y1, table);
+	DDAwithTable(x0, y0, x1, y1, table); //Apliquem l'algoritme de DDAwithTable per omplir la taula segons els costats del triangle
 	DDAwithTable(x1, y1, x2, y2, table);
 	DDAwithTable(x2, y2, x0, y0, table);
 	
@@ -498,13 +496,12 @@ void Image::drawTriangleInterpolated(int x0, int y0, int x1, int y1, int x2, int
 	int v1[2];
 	int v2[2];
 
-	v0[0] = x1 - x0;
-	v0[1] = y1 - y0;
-	v1[0] = x2 - x0;
+	v0[0] = x1 - x0; //Calculem P1 - P0
+	v0[1] = y1 - y0; 
+	v1[0] = x2 - x0; //Calculem P2 - P0
 	v1[1] = y2 - y0;
 	
-	//computing the dot of a vector with itself
-	//is the same as length*length but faster
+	//Calculem el producte escalar dels vectors entre ells
 	float d00 = v0[0] * v0[0] + v0[1] * v0[1]; //v0.dot(v0);
 	float d01 = v0[0] * v1[0] + v0[1] * v1[1]; //v0.dot(v1);
 	float d11 = v1[0] * v1[0] + v1[1] * v1[1]; //v1.dot(v1);
@@ -512,20 +509,20 @@ void Image::drawTriangleInterpolated(int x0, int y0, int x1, int y1, int x2, int
 	for (int i = 0; i < table.size(); i++) {
 		for (int j = table[i].minx; j < table[i].maxx; j++)
 		{
-			v2[0] = j - x0; 
+			v2[0] = j - x0; //Calculem P - P0
 			v2[1] = i - y0; 
 			
 			float d20 = v2[0] * v0[0] + v2[1] * v0[1]; //v2.dot(v0);
 			float d21 = v2[0] * v1[0] + v2[1] * v1[1]; //v2.dot(v1);
-			float denom = d00 * d11 - d01 * d01;
-			float v = (d11 * d20 - d01 * d21) / denom;
+			float denom = d00 * d11 - d01 * d01; //Calculem el denominador que ens permet calcular v i w
+			float v = (d11 * d20 - d01 * d21) / denom; //Calculem els pesos v, w i u que tindrem segons el píxel del triangle
 			float w = (d00 * d21 - d01 * d20) / denom;
 			float u = 1.0 - v - w;
 
-			//use weights to compute final color
-			Color c = c0 * u + c1 * v + c2 * w;
+			///Fem servir els pesos per calcular el color final del píxel
+			Color c = c0 * u + c1 * v + c2 * w; 
 
-			setPixelSafe(j, i, c);
+			setPixelSafe(j, i, c); //Pintem el píxel amb el color corresponent.
 		}
 	}
 }
